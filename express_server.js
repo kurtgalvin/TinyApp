@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const uid = require("uid")
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -11,6 +12,10 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+function generateRandomString() {
+  return uid(6)
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
