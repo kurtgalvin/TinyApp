@@ -1,12 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const uid = require("uid")
+const cookieParser = require('cookie-parser');
+const uid = require("uid");
 
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -59,6 +61,11 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
+
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username)
+  res.redirect("/urls")
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
