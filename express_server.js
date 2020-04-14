@@ -43,8 +43,8 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  let templateVars = { 
-    shortURL, 
+  let templateVars = {
+    shortURL,
     username: req.cookies.username,
     longURL: urlDatabase[shortURL]
   };
