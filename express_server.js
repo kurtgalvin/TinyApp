@@ -28,10 +28,10 @@ const users = {
   }
 };
 
-const emailExists = function(email) {
+const getEmailID = function(email) {
   for (const id of Object.keys(users)) {
     if (users[id].email === email) {
-      return true
+      return id
     }
   }
   return false
@@ -105,7 +105,7 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).send("Must include Email and Password")
-  } else if (emailExists(email)) {
+  } else if (getEmailID(email)) {
     res.status(400).send("Email already in use")
   }
   const id = uid(6)
@@ -123,8 +123,17 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username)
-  res.redirect("/urls")
+  const {email, password} = req.body;
+  if (!email || !password) {
+    res.status(400).send("Must include Email and Password");
+  } 
+  const id = getEmailID(email);
+  if (id && users[id].password === password) {
+    res.cookie("user_id", id)
+    res.redirect("/urls")
+  } else {
+    res.status(400).send("Password does not match")
+  }
 })
 
 app.post("/logout", (req, res) => {
