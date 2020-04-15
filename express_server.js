@@ -37,6 +37,16 @@ const getEmailID = function(email) {
   return false
 }
 
+const urlsForUser = function(id) {
+  const result = {};
+  for (const key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      result[key] = urlDatabase[key];
+    }
+  }
+  return result
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -46,11 +56,16 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {
-    user: users[req.cookies.user_id],
-    urls: urlDatabase
-  };
-  res.render("urls_index", templateVars);
+  const { user_id } = req.cookies;
+  if (user_id && users[user_id]) {
+    const templateVars = {
+      user: users[req.cookies.user_id],
+      urls: urlsForUser(user_id)
+    };
+    res.render("urls_index", templateVars);
+  } else {
+    res.redirect("/login")
+  }
 });
 
 app.post("/urls", (req, res) => {
