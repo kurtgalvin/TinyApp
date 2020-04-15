@@ -28,6 +28,15 @@ const users = {
   }
 };
 
+const emailExists = function(email) {
+  for (const id of Object.keys(users)) {
+    if (users[id].email === email) {
+      return true
+    }
+  }
+  return false
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -91,10 +100,16 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).send("Must include Email and Password")
+  } else if (emailExists(email)) {
+    res.status(400).send("Email already in use")
+  }
   const id = uid(6)
   users[id] = { id, email, password }
   res.cookie("user_id", id)
   res.redirect("/urls")
+
 })
 
 app.post("/login", (req, res) => {
