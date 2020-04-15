@@ -132,7 +132,7 @@ app.post("/login", (req, res) => {
     res.cookie("user_id", id)
     res.redirect("/urls")
   } else {
-    res.status(400).send("Password does not match")
+    res.status(403).send("Password does not match")
   }
 })
 
