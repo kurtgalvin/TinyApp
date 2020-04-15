@@ -61,13 +61,14 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const { user_id } = req.cookies;
-  if (user_id) {
+  if (user_id && users[user_id]) {
     const templateVars = {
       user: users[user_id]
     }
     res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login")
   }
-  res.redirect("/login")
 });
 
 app.get("/urls/:shortURL", (req, res) => {
