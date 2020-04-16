@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const uid = require("uid");
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -154,7 +155,7 @@ app.post("/register", (req, res) => {
     res.status(400).send("Email already in use")
   }
   const id = uid(6)
-  users[id] = { id, email, password }
+  users[id] = { id, email, password: bcrypt.hashSync(password, 10) }
   res.cookie("user_id", id)
   res.redirect("/urls")
 
@@ -173,7 +174,7 @@ app.post("/login", (req, res) => {
     res.status(400).send("Must include Email and Password");
   } 
   const id = getEmailID(email);
-  if (id && users[id].password === password) {
+  if (id && bcrypt.compareSync(password, users[id].password)) {
     res.cookie("user_id", id)
     res.redirect("/urls")
   } else {
