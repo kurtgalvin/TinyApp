@@ -18,6 +18,8 @@ app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
 
+
+
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "aJ48lW" },
   "9sm5xK": { longURL: "http://www.google.com", userID: "aJ48lW" },
@@ -95,12 +97,11 @@ app.post("/login", (req, res) => {
 })
 
 app.post("/logout", (req, res) => {
-  // res.clearCookie("user_id")
   req.session.user_id = "";
   res.redirect("/urls")
 })
 
-app.use(urls(users, urlDatabase))
+app.use("/urls", urls(users, urlDatabase))
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

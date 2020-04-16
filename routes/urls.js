@@ -6,11 +6,7 @@ const { getUrlsByUser } = require('../helpers')
 const router = express.Router()
 
 const urls = function(users, urlDatabase) {
-  router.get("/urls.json", (req, res) => {
-    res.json(urlDatabase);
-  });
-  
-  router.get("/urls", (req, res) => {
+  router.get("/", (req, res) => {
     const { user_id } = req.session;
     if (user_id && users[user_id]) {
       const templateVars = {
@@ -23,7 +19,7 @@ const urls = function(users, urlDatabase) {
     }
   });
   
-  router.post("/urls", (req, res) => {
+  router.post("/", (req, res) => {
     const shortURL = uid(6)
     const { user_id } = req.session;
     urlDatabase[shortURL] = { 
@@ -33,7 +29,7 @@ const urls = function(users, urlDatabase) {
     res.redirect(`/urls/${shortURL}`)
   });
   
-  router.get("/urls/new", (req, res) => {
+  router.get("/new", (req, res) => {
     const { user_id } = req.session;
     if (user_id && users[user_id]) {
       const templateVars = {
@@ -45,7 +41,7 @@ const urls = function(users, urlDatabase) {
     }
   });
   
-  router.get("/urls/:shortURL", (req, res) => {
+  router.get("/:shortURL", (req, res) => {
     const { shortURL } = req.params;
     const { user_id } = req.session;
     const urlObj = urlDatabase[shortURL];
@@ -61,7 +57,7 @@ const urls = function(users, urlDatabase) {
     }
   });
   
-  router.post("/urls/:shortURL/delete", (req, res) => {
+  router.post("/:shortURL/delete", (req, res) => {
     const { shortURL } = req.params;
     const { user_id } = req.session;
     if (urlDatabase[shortURL].userID === user_id) {
@@ -72,7 +68,7 @@ const urls = function(users, urlDatabase) {
     }
   });
   
-  router.post("/urls/:shortURL/update", (req, res) => {
+  router.post("/:shortURL/update", (req, res) => {
     const { shortURL } = req.params;
     const { user_id } = req.session;
     if (urlDatabase[shortURL].userID === user_id) {
