@@ -4,7 +4,7 @@ const cookieSession = require('cookie-session')
 const uid = require("uid");
 const bcrypt = require('bcrypt');
 
-const { getUserByEmail } = require('./helpers')
+const { getUserByEmail, getUrlsByUser } = require('./helpers')
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -36,16 +36,6 @@ const users = {
   }
 };
 
-const urlsForUser = function(id) {
-  const result = {};
-  for (const key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      result[key] = urlDatabase[key];
-    }
-  }
-  return result
-}
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -59,7 +49,7 @@ app.get("/urls", (req, res) => {
   if (user_id && users[user_id]) {
     const templateVars = {
       user: users[user_id],
-      urls: urlsForUser(user_id)
+      urls: getUrlsByUser(user_id, urlDatabase)
     };
     res.render("urls_index", templateVars);
   } else {
