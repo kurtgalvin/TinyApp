@@ -34,13 +34,14 @@ const users = {
   }
 };
 
-const getEmailID = function(email) {
-  for (const id of Object.keys(users)) {
-    if (users[id].email === email) {
-      return id
+const getUserByEmail = function(email, database) {
+  for (const userId of Object.keys(database)) {
+    const user = database[userId];
+    if (user.email === email) {
+      return user;
     }
   }
-  return false
+  return false;
 }
 
 const urlsForUser = function(id) {
@@ -155,7 +156,7 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).send("Must include Email and Password")
-  } else if (getEmailID(email)) {
+  } else if (getUserByEmail(email, users)) {
     res.status(400).send("Email already in use")
   }
   const id = uid(6)
@@ -176,10 +177,10 @@ app.post("/login", (req, res) => {
   const {email, password} = req.body;
   if (!email || !password) {
     res.status(400).send("Must include Email and Password");
-  } 
-  const id = getEmailID(email);
-  if (id && bcrypt.compareSync(password, users[id].password)) {
-    req.session.user_id = id
+  }
+  const user = getUserByEmail(email, users);
+  if (user && bcrypt.compareSync(password, user.password)) {
+    req.session.user_id = user.id
     res.redirect("/urls")
   } else {
     res.status(403).send("Password does not match")
