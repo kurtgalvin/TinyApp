@@ -5,7 +5,6 @@ const getUserByEmail = function(email, userDB) {
       return user;
     }
   }
-  return false;
 }
 
 const getUrlsByUser = function(id, urlDB) {
