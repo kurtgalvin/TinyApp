@@ -108,16 +108,29 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  const { shortURL } = req.params;
+  const { user_id } = req.cookies;
+  if (urlDatabase[shortURL].userID === user_id) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    res.status(400).send("Page Not Found");
+  }
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  const shortURL = req.params.shortURL;
-  // TODO: Add userID
-  urlDatabase[shortURL] = { longURL: req.body.longURL }
-  res.redirect("/urls")
+  const { shortURL } = req.params;
+  const { user_id } = req.cookies;
+  if (urlDatabase[shortURL].userID === user_id) {
+    urlDatabase[shortURL] = {
+      ...urlDatabase[shortURL],
+      longURL: req.body.longURL
+    }
+    res.redirect("/urls")
+  } else {
+    res.status(400).send("Page Not Found");
+  }
+
 })
 
 app.get("/u/:shortURL", (req, res) => {
