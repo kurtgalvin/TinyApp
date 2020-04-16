@@ -92,13 +92,19 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
-  let templateVars = {
-    shortURL,
-    user: users[req.cookies.user_id],
-    longURL: urlDatabase[shortURL].longURL
-  };
-  res.render("urls_show", templateVars);
+  const { shortURL } = req.params;
+  const { user_id } = req.cookies;
+  const urlObj = urlDatabase[shortURL];
+  if (urlObj.userID === user_id) {
+    const templateVars = {
+      shortURL,
+      user: users[user_id],
+      longURL: urlObj.longURL
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(404).send("Page Not Found");
+  }
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
