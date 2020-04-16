@@ -4,7 +4,8 @@ const cookieSession = require('cookie-session')
 const uid = require("uid");
 const bcrypt = require('bcrypt');
 
-const { getUserByEmail, getUrlsByUser } = require('./helpers')
+const { getUserByEmail } = require('./helpers')
+const urls = require('./routes/urls')
 
 const app = express();
 const PORT = 8080; // default port 8080
@@ -44,87 +45,6 @@ app.get("/", (req, res) => {
     res.redirect("/login")
   }
 });
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/urls", (req, res) => {
-  const { user_id } = req.session;
-  if (user_id && users[user_id]) {
-    const templateVars = {
-      user: users[user_id],
-      urls: getUrlsByUser(user_id, urlDatabase)
-    };
-    res.render("urls_index", templateVars);
-  } else {
-    res.redirect("/login")
-  }
-});
-
-app.post("/urls", (req, res) => {
-  const shortURL = uid(6)
-  const { user_id } = req.session;
-  urlDatabase[shortURL] = { 
-    longURL: req.body.longURL,
-    userID: user_id
-  }
-  res.redirect(`/urls/${shortURL}`)
-});
-
-app.get("/urls/new", (req, res) => {
-  const { user_id } = req.session;
-  if (user_id && users[user_id]) {
-    const templateVars = {
-      user: users[user_id]
-    }
-    res.render("urls_new", templateVars);
-  } else {
-    res.redirect("/login")
-  }
-});
-
-app.get("/urls/:shortURL", (req, res) => {
-  const { shortURL } = req.params;
-  const { user_id } = req.session;
-  const urlObj = urlDatabase[shortURL];
-  if (urlObj.userID === user_id) {
-    const templateVars = {
-      shortURL,
-      user: users[user_id],
-      longURL: urlObj.longURL
-    };
-    res.render("urls_show", templateVars);
-  } else {
-    res.status(404).send("Page Not Found");
-  }
-});
-
-app.post("/urls/:shortURL/delete", (req, res) => {
-  const { shortURL } = req.params;
-  const { user_id } = req.session;
-  if (urlDatabase[shortURL].userID === user_id) {
-    delete urlDatabase[shortURL];
-    res.redirect("/urls");
-  } else {
-    res.status(400).send("Page Not Found");
-  }
-});
-
-app.post("/urls/:shortURL/update", (req, res) => {
-  const { shortURL } = req.params;
-  const { user_id } = req.session;
-  if (urlDatabase[shortURL].userID === user_id) {
-    urlDatabase[shortURL] = {
-      ...urlDatabase[shortURL],
-      longURL: req.body.longURL
-    }
-    res.redirect("/urls")
-  } else {
-    res.status(400).send("Page Not Found");
-  }
-
-})
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
@@ -179,6 +99,8 @@ app.post("/logout", (req, res) => {
   req.session.user_id = "";
   res.redirect("/urls")
 })
+
+app.use(urls(users, urlDatabase))
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
