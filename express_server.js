@@ -31,11 +31,6 @@ const users = {
     id: "userRandomID", 
     email: "user@example.com", 
     password: "purple-monkey-dinosaur"
-  },
-  "aJ48lW": {
-    id: "aJ48lW",
-    email: "kurtgalvin@gmail.com",
-    password: "123"
   }
 };
 

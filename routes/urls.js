@@ -45,7 +45,7 @@ const urls = function(users, urlDatabase) {
     const { shortURL } = req.params;
     const { user_id } = req.session;
     const urlObj = urlDatabase[shortURL];
-    if (urlObj.userID === user_id) {
+    if (urlObj && urlObj.userID === user_id) {
       const templateVars = {
         shortURL,
         user: users[user_id],
