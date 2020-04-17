@@ -5,7 +5,7 @@ const getUserByEmail = function(email, userDB) {
       return user;
     }
   }
-}
+};
 
 const getUrlsByUser = function(id, urlDB) {
   const result = {};
@@ -14,10 +14,10 @@ const getUrlsByUser = function(id, urlDB) {
       result[key] = urlDB[key];
     }
   }
-  return result
-}
+  return result;
+};
 
 module.exports = {
-  getUserByEmail, 
+  getUserByEmail,
   getUrlsByUser
-}
+};
