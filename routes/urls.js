@@ -3,9 +3,10 @@ const uid = require("uid");
 
 const { getUrlsByUser } = require('../helpers')
 
-const router = express.Router()
 
 const urls = function(users, urlDatabase) {
+  const router = express.Router()
+  
   router.get("/", (req, res) => {
     const { user_id } = req.session;
     if (user_id && users[user_id]) {
