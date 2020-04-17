@@ -79,7 +79,7 @@ const urls = function(users, urlDatabase) {
   router.post("/:shortURL/delete", (req, res) => {
     const { shortURL } = req.params;
     const { user_id } = req.session;
-    if (urlDatabase[shortURL].userID === user_id) {
+    if (user_id && urlDatabase[shortURL].userID === user_id) {
       delete urlDatabase[shortURL];
       res.redirect("/urls");
     } else {
