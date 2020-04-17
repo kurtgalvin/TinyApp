@@ -45,8 +45,12 @@ app.get("/", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const { longURL } = urlDatabase[shortURL];
-  res.redirect(longURL);
+  const urlObj = urlDatabase[shortURL];
+  if (urlObj) {
+    res.redirect(urlObj.longURL);
+  } else {
+    res.status(404).send("Page Not Found")
+  }
 });
 
 app.get("/register", (req, res) => {

@@ -20,13 +20,17 @@ const urls = function(users, urlDatabase) {
   });
   
   router.post("/", (req, res) => {
-    const shortURL = uid(6)
     const { user_id } = req.session;
-    urlDatabase[shortURL] = { 
-      longURL: req.body.longURL,
-      userID: user_id
+    if (user_id) {
+      const shortURL = uid(6)
+      urlDatabase[shortURL] = { 
+        longURL: req.body.longURL,
+        userID: user_id
+      }
+      res.redirect(`/urls/${shortURL}`)
+    } else {
+      res.status(400).send("Log in Required")
     }
-    res.redirect(`/urls/${shortURL}`)
   });
   
   router.get("/new", (req, res) => {
@@ -57,17 +61,6 @@ const urls = function(users, urlDatabase) {
     }
   });
   
-  router.post("/:shortURL/delete", (req, res) => {
-    const { shortURL } = req.params;
-    const { user_id } = req.session;
-    if (urlDatabase[shortURL].userID === user_id) {
-      delete urlDatabase[shortURL];
-      res.redirect("/urls");
-    } else {
-      res.status(400).send("Page Not Found");
-    }
-  });
-  
   router.post("/:shortURL/update", (req, res) => {
     const { shortURL } = req.params;
     const { user_id } = req.session;
@@ -82,6 +75,18 @@ const urls = function(users, urlDatabase) {
     }
   
   })
+  
+  router.post("/:shortURL/delete", (req, res) => {
+    const { shortURL } = req.params;
+    const { user_id } = req.session;
+    if (urlDatabase[shortURL].userID === user_id) {
+      delete urlDatabase[shortURL];
+      res.redirect("/urls");
+    } else {
+      res.status(400).send("Page Not Found");
+    }
+  });
+  
   return router;
 }
 
